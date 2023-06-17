@@ -1,4 +1,5 @@
-﻿using SuperChat.MVVM.Model;
+﻿using SuperChat.Core;
+using SuperChat.MVVM.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,31 +9,69 @@ using System.Threading.Tasks;
 
 namespace SuperChat.MVVM.ViewModel
 {
-    class MainViewModel
+    class MainViewModel : ObservableObject
     {
         public ObservableCollection<MessageModel> Messages { get; set; }
         public ObservableCollection<ContactModel> Contacts { get; set; }
+        /* Commands */
+        public RelayCommand SendCommand { get; set; }
+
+        private ContactModel _selectedContact;
+
+        public ContactModel SelectedContact
+        {
+            get { return _selectedContact; }
+            set
+            {
+                _selectedContact = value;
+                OnPropertyChanged();
+            }
+        }
+
+
+        private string _message;
+
+        public string Message
+        {
+            get { return _message; }
+            set
+            {
+                _message = value;
+                OnPropertyChanged();
+            }
+        }
+
         public MainViewModel()
         {
             Messages = new ObservableCollection<MessageModel>();
             Contacts = new ObservableCollection<ContactModel>();
 
+            SendCommand = new RelayCommand(o =>
+            {
+                Messages.Add(new MessageModel
+                {
+                    Message = Message,
+                    FirstMessage = false
+                });
+                Message = "";
+            });
+
             Messages.Add(new MessageModel
             {
-                Username="Ayşe",
-                UsernameColor="#409aff",
-                ImageSource= "https://i.imgur.com/yMWvLXd.png",
-                Message="Test",
-                Time=DateTime.Now,
-                IsNativeOrigin=false,
-                FirstMessage=true
+                Username = "Ali",
+                UsernameColor = "#409aff",
+                ImageSource = "https://i.imgur.com/i2szTsp.png",
+                Message = "Test",
+                Time = DateTime.Now,
+                IsNativeOrigin = false,
+                FirstMessage = true
             });
 
             for (int i = 0; i < 3; i++)
             {
                 Messages.Add(new MessageModel
                 {
-                    Username = "Ayşe",
+                    Username = "Ali",
                     UsernameColor = "#409aff",
                     ImageSource = "https://i.imgur.com/yMWvLXd.png",
                     Message = "Test",
@@ -69,9 +108,9 @@ namespace SuperChat.MVVM.ViewModel
             {
                 Contacts.Add(new ContactModel
                 {
-                    Username = $"Ayşe {i}",
-                    ImageSource= "https://i.imgur.com/i2szTsp.png",
-                    Messages=Messages
+                    Username = $"Ali {i}",
+                    ImageSource = "https://i.imgur.com/i2szTsp.png",
+                    Messages = Messages
                 });
             }
         }
